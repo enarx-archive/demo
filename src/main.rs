@@ -1,6 +1,8 @@
 use ketuvim::{Kvm, VirtualMachine, VirtualCpu, MemoryFlags, Reason, ReasonIo, arch, util::map};
 use std::convert::TryFrom;
-use codicon::Decoder;
+use std::io::Write;
+use std::fs::File;
+use codicon::*;
 
 fn fetch_chain(fw: &sev::firmware::Firmware) -> sev::certs::Chain {
     const CEK_SVC: &str = "https://kdsintf.amd.com/cek/id";
@@ -31,8 +33,6 @@ fn fetch_chain(fw: &sev::firmware::Firmware) -> sev::certs::Chain {
 }
 
 fn main() {
-    use std::io::Write;
-
     let mut code = [
         0xba, 0xf8, 0x03, // mov $0x3f8, %dx
         0xb0, 3,          // mov 3, %al
@@ -69,10 +69,17 @@ fn main() {
     code[6] = b;
 
     // Server delivers chain and build to client...
-    println!("         SERVER: Fetch Certificate Chain");
     let fw = sev::firmware::Firmware::open().unwrap();
     let build = fw.platform_status().unwrap().build;
-    let chain = fetch_chain(&fw);
+    let chain = if let Ok(mut file) = File::open("/tmp/demo.chain") {
+        sev::certs::Chain::decode(&mut file, ()).unwrap()
+    } else {
+        println!("         SERVER: Fetch Certificate Chain");
+        let chain = fetch_chain(&fw);
+        let mut file = File::create("/tmp/demo.chain").unwrap();
+        chain.encode(&mut file, ()).unwrap();
+        chain
+    };
     println!("CLIENT < SERVER: Certificate Chain");
 
     // Client creates session and starts the launch.
