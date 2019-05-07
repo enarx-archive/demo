@@ -103,12 +103,12 @@ fn main() {
     let session = session.verify(build, measurement).unwrap();
     println!("CLIENT         : Measurement OK");
     let secret = session.secret(sev::launch::HeaderFlags::default(), &code).unwrap();
-    println!("CLIENT > SERVER: Encrypted Code/Data");
-
-    // Server injects the encrypted code into the VM.
-    print!("         SERVER: Inject Encrypted Code/Data: ");
+    print!("CLIENT > SERVER: Encrypted Code/Data: ");
     for b in secret.ciphertext.iter() { print!("{:02X}", *b) }
     println!("");
+
+    // Server injects the encrypted code into the VM.
+    println!("         SERVER: Inject Encrypted Code/Data");
     let len = secret.ciphertext.len() as u32;
     launch.inject(secret, addr, len).unwrap();
     let (_, vm) = launch.finish().unwrap();
