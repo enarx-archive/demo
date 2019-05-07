@@ -1,6 +1,5 @@
 use ketuvim::{Kvm, VirtualMachine, VirtualCpu, MemoryFlags, Reason, ReasonIo, arch, util::map};
 use std::convert::TryFrom;
-use std::io::Write;
 use std::fs::File;
 use codicon::*;
 
@@ -33,10 +32,22 @@ fn fetch_chain(fw: &sev::firmware::Firmware) -> sev::certs::Chain {
 }
 
 fn main() {
-    let mut code = [
+    let args: Vec<String> = std::env::args().collect();
+    if args.len() != 3 {
+        eprintln!("Usage: demo NUMBER NUMBER");
+        std::process::exit(1);
+    }
+
+    let a = args[1].trim().parse::<u8>().expect("Must be a number!");
+    if a > 4 { panic!("Number must be between 0 and 4, inclusive!"); }
+
+    let b = args[2].trim().parse::<u8>().expect("Must be a number!");
+    if b > 4 { panic!("Number must be between 0 and 4, inclusive!"); }
+
+    let code = [
         0xba, 0xf8, 0x03, // mov $0x3f8, %dx
-        0xb0, 3,          // mov 3, %al
-        0xb3, 4,          // mov 4, %bl
+        0xb0, a,          // mov a, %al
+        0xb3, b,          // mov b, %bl
 
         0x00, 0xd8,       // add %bl, %al
         0x04, b'0',       // add $'0', %al
@@ -47,26 +58,6 @@ fn main() {
 
         0xf4,             // hlt
     ];
-
-    let mut a = 5u8;
-    while a > 4 {
-        let mut tmp = String::new();
-        print!("CLIENT         : Enter a number (0-4): ");
-        std::io::stdout().flush().unwrap();
-        std::io::stdin().read_line(&mut tmp).unwrap();
-        if let Ok(i) = tmp.trim().parse::<u8>() { a = i; }
-    }
-    code[4] = a;
-
-    let mut b = 5u8;
-    while b > 4 {
-        let mut tmp = String::new();
-        print!("CLIENT         : Enter another number (0-4): ");
-        std::io::stdout().flush().unwrap();
-        std::io::stdin().read_line(&mut tmp).unwrap();
-        if let Ok(i) = tmp.trim().parse::<u8>() { b = i; }
-    }
-    code[6] = b;
 
     // Server delivers chain and build to client...
     let fw = sev::firmware::Firmware::open().unwrap();
