@@ -22,16 +22,18 @@ fn main() {
 
     if cfg!(feature = "rust") {
         println!("Compiling Rust source to WASM...");
-        Command::new("rustc")
+        assert!(Command::new("rustc")
             .arg("-C")
             .arg("lto")
+            .arg("-C")
             .arg("opt-level=3")
             .arg("--target")
             .arg("wasm32-unknown-unknown")
             .arg("-o")
             .arg(format!("{}/add.wasm", out))
             .arg("src/add.rs")
-            .spawn()
-            .expect("failed to compile WASM module");
+            .status()
+            .expect("failed to compile WASM module")
+            .success());
     }
 }
