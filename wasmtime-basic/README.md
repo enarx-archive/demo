@@ -1,6 +1,6 @@
 # Wasmtime Basic Demo
 
-This is an example crate demonstrating how Enarx may use Wasmtime, a Rust-powered JIT, to natively run programs from several different source languages (Rust/C/C++) compiled to WASI-compliant WASM.
+This is an example crate demonstrating how Enarx may use Wasmtime, a Rust-powered JIT, to natively run programs from several different source languages (Rust/C/C++) compiled to WASM.
 
 ## Running the demo
 
