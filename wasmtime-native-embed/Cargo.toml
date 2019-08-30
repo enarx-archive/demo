@@ -1,0 +1,13 @@
+[package]
+name = "wasmtime-native-embed"
+version = "0.1.0"
+authors = ["Stefan Junker <sjunker@redhat.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+# Yury's toy project for embedding wasmtime. Will likely never have a tagged release
+wasmtime-embed = { git = "https://github.com/yurydelendik/wasmtime-embed", package = "wasmtime-embed", rev = "cc5740f" }
+# Complementary macros for wasmtime-embed. Will likely never have a tagged release
+wasmtime-embed-macro = { git = "https://github.com/yurydelendik/wasmtime-embed", package = "wasmtime-embed-macro", rev = "cc5740f" }
