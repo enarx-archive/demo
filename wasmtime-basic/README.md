@@ -18,4 +18,12 @@ Rust is compiled by default. If C is desired, the appropriate feature can be inv
 cargo run --no-default-features --features c
 ```
 
-Or, alternatively, by changing the `default` feature in `Cargo.toml` from `["rust"]` to `["c"]`.
+## Running benchmarks
+
+`main.rs` includes performance benchmarks useful for analyzing the startup cost and runtime of functions in Wasmtime.
+
+These benchmarks use Rust's unstable built-in benchmarking tools, and must be run on Rust nightly. Additionally, the `benchmark` feature must be enabled to run them:
+
+```
+cargo +nightly bench --features benchmark
+```
