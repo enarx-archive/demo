@@ -1,0 +1,7 @@
+[workspace]
+
+members = [
+    "amd-sev",
+    "wasmtime-basic",
+    "wasmtime-native-embed",
+]
