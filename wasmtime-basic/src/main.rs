@@ -18,9 +18,6 @@
 
 #![cfg_attr(feature = "benchmark", feature(test))]
 
-#[cfg(test)]
-extern crate test;
-
 use cranelift_codegen::settings;
 use cranelift_native;
 use std::fs::File;
@@ -82,8 +79,9 @@ pub fn native_add(a: i32, b: i32) -> i32 {
 }
 
 // Performance benchmarking for the demo.
-#[cfg(test)]
+#[cfg(all(feature = "benchmark", test))]
 mod tests {
+    extern crate test;
     use super::*;
     use test::Bencher;
 
