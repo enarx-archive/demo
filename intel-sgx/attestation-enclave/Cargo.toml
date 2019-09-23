@@ -1,0 +1,19 @@
+[package]
+name = "attestation-enclave"
+version = "0.1.0"
+authors = ["Lily Sturmann <lsturman@redhat.com>"]
+edition = "2018"
+
+[dependencies]
+serde_json = "1.0"
+bufstream = "0.1.4"
+
+# The sgx-isa crate allows the use of Fortanix's data structures
+# relating to SGX, ex. Report, TargetInfo. The sgxstd feature
+# should be enabled when using std::os::fortanix_sgx functionality,
+# ex. ENCLU[EGETKEY] and ENCLU[EREPORT]. Serde_support allows for the
+# serialization of Report and Targetinfo structs.
+# See more: https://edp.fortanix.com/docs/api/std/os/fortanix_sgx/index.html
+[dependencies.sgx-isa]
+version = "0.3.1"
+features = ["serde_support", "sgxstd"]

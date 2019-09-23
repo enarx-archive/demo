@@ -1,0 +1,17 @@
+[package]
+name = "attestation-daemon"
+version = "0.1.0"
+authors = ["Lily Sturmann <lsturman@redhat.com>"]
+edition = "2018"
+
+[dependencies]
+openssl = "0.10.23"
+hex = "0.3.1"
+dcap-ql = "0.2.0"
+serde_json = "1.0.40"
+bufstream = "0.1.4"
+serde = { version = "1.0", features = ["derive"] }
+
+[dependencies.sgx-isa]
+version = "0.3.1"
+features = ["serde_support"]
