@@ -1,0 +1,13 @@
+[package]
+name = "attestation-tenant"
+version = "0.1.0"
+authors = ["Lily Sturmann <lsturman@redhat.com>"]
+edition = "2018"
+
+[dependencies]
+sgx-isa = { version = "0.3.0" }
+dcap-ql = "0.2.0"
+openssl = "0.10.23"
+hex = "0.3.1"
+failure = "0.1.5"
+bufstream = "0.1.4"
