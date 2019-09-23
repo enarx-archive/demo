@@ -54,7 +54,6 @@ impl CertChain {
                 panic!("Invalid issuer relationship in certificate chain.");
             }
         }
-        println!("Issuer relationships in PCK cert chain are valid...");
         Ok(())
     }
 
@@ -85,7 +84,6 @@ impl CertChain {
         // verified.
         context.init(&store, &self.leaf, &chain, |c| c.verify_cert())?;
 
-        println!("Signatures on certificate chain are valid...");
         Ok(())
     }
 }
