@@ -5,8 +5,7 @@ authors = ["nmccallu <npmccallum@redhat.com>"]
 edition = "2018"
 
 [dependencies]
-ketuvim = { git = "https://github.com/enarx/ketuvim" }
-sev = { git = "https://github.com/enarx/sev", features = ["openssl"] }
+ketuvim = { git = "https://github.com/enarx/ketuvim", rev = "be940e436e576576abce3249395d55cce45c441c" }
 reqwest = "0.9.16"
 codicon = "2.1.0"
 libc = "0.2.53"
