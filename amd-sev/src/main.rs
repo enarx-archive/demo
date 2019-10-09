@@ -13,7 +13,9 @@
 // limitations under the License.
 
 use codicon::*;
-use ketuvim::{arch, util::map, Kvm, MemoryFlags, Reason, ReasonIo, VirtualCpu, VirtualMachine};
+use ketuvim::{
+    arch, sev::sev, util::map, Kvm, MemoryFlags, Reason, ReasonIo, VirtualCpu, VirtualMachine,
+};
 use std::convert::TryFrom;
 use std::fs::File;
 
@@ -166,6 +168,7 @@ fn main() {
 
                 _ => panic!("Unexpected IO!"),
             },
+            other => panic!("Unexpected reason: {:?}", other),
         }
     }
 }
