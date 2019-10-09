@@ -12,35 +12,32 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use ketuvim::{Kvm, VirtualMachine, VirtualCpu, MemoryFlags, Reason, ReasonIo, arch, util::map};
+use codicon::*;
+use ketuvim::{arch, util::map, Kvm, MemoryFlags, Reason, ReasonIo, VirtualCpu, VirtualMachine};
 use std::convert::TryFrom;
 use std::fs::File;
-use codicon::*;
 
 fn fetch_chain(fw: &sev::firmware::Firmware) -> sev::certs::Chain {
     const CEK_SVC: &str = "https://kdsintf.amd.com/cek/id";
     const NAPLES: &str = "https://developer.amd.com/wp-content/resources/ask_ark_naples.cert";
 
-    let mut chain = fw.pdh_cert_export()
+    let mut chain = fw
+        .pdh_cert_export()
         .expect("unable to export SEV certificates");
 
     let id = fw.get_identifer().expect("error fetching identifier");
     let url = format!("{}/{}", CEK_SVC, id);
 
-    let mut rsp = reqwest::get(&url)
-        .expect(&format!("unable to contact server"));
+    let mut rsp = reqwest::get(&url).expect(&format!("unable to contact server"));
     assert!(rsp.status().is_success());
 
-    chain.cek = sev::certs::sev::Certificate::decode(&mut rsp, ())
-        .expect("Invalid CEK!");
+    chain.cek = sev::certs::sev::Certificate::decode(&mut rsp, ()).expect("Invalid CEK!");
 
-    let mut rsp = reqwest::get(NAPLES)
-        .expect(&format!("unable to contact server"));
+    let mut rsp = reqwest::get(NAPLES).expect(&format!("unable to contact server"));
     assert!(rsp.status().is_success());
 
     sev::certs::Chain {
-        ca: sev::certs::ca::Chain::decode(&mut rsp, ())
-            .expect("Invalid CA chain!"),
+        ca: sev::certs::ca::Chain::decode(&mut rsp, ()).expect("Invalid CA chain!"),
         sev: chain,
     }
 }
@@ -53,24 +50,25 @@ fn main() {
     }
 
     let a = args[1].trim().parse::<u8>().expect("Must be a number!");
-    if a > 4 { panic!("Number must be between 0 and 4, inclusive!"); }
+    if a > 4 {
+        panic!("Number must be between 0 and 4, inclusive!");
+    }
 
     let b = args[2].trim().parse::<u8>().expect("Must be a number!");
-    if b > 4 { panic!("Number must be between 0 and 4, inclusive!"); }
+    if b > 4 {
+        panic!("Number must be between 0 and 4, inclusive!");
+    }
 
     let code = [
         0xba, 0xf8, 0x03, // mov $0x3f8, %dx
-        0xb0, a,          // mov a, %al
-        0xb3, b,          // mov b, %bl
-
-        0x00, 0xd8,       // add %bl, %al
-        0x04, b'0',       // add $'0', %al
-        0xee,             // out %al, (%dx)
-
-        0xb0, b'\n',      // mov $'\n', %al
-        0xee,             // out %al, (%dx)
-
-        0xf4,             // hlt
+        0xb0, a, // mov a, %al
+        0xb3, b, // mov b, %bl
+        0x00, 0xd8, // add %bl, %al
+        0x04, b'0', // add $'0', %al
+        0xee, // out %al, (%dx)
+        0xb0, b'\n', // mov $'\n', %al
+        0xee,  // out %al, (%dx)
+        0xf4,  // hlt
     ];
 
     // Server delivers chain and build to client...
@@ -101,9 +99,11 @@ fn main() {
         .protection(map::Protection::READ | map::Protection::WRITE)
         .flags(map::Flags::ANONYMOUS)
         .extra(0x1000)
-        .done().unwrap();
+        .done()
+        .unwrap();
     let addr = &*mem as *const () as u64;
-    vm.add_region(0, MemoryFlags::default(), 0x1000, mem).unwrap();
+    vm.add_region(0, MemoryFlags::default(), 0x1000, mem)
+        .unwrap();
 
     // Server takes a measurement and sends it to the client.
     let launch = ketuvim::sev::Launch::new(vm).unwrap();
@@ -116,9 +116,13 @@ fn main() {
     let session = session.measure().unwrap();
     let session = session.verify(build, measurement).unwrap();
     println!("CLIENT         : Measurement OK");
-    let secret = session.secret(sev::launch::HeaderFlags::default(), &code).unwrap();
+    let secret = session
+        .secret(sev::launch::HeaderFlags::default(), &code)
+        .unwrap();
     print!("CLIENT > SERVER: Encrypted Code/Data: ");
-    for b in secret.ciphertext.iter() { print!("{:02X}", *b) }
+    for b in secret.ciphertext.iter() {
+        print!("{:02X}", *b)
+    }
     println!("");
 
     // Server injects the encrypted code into the VM.
@@ -140,7 +144,8 @@ fn main() {
         rip: 0x1000,
         rflags: 0x2,
         ..Default::default()
-    }).unwrap();
+    })
+    .unwrap();
 
     loop {
         match cpu.run().unwrap() {
@@ -148,9 +153,13 @@ fn main() {
 
             Reason::Io(io) => match io {
                 ReasonIo::Out { port, data } => match port {
-                    0x03f8 => for b in data {
-                        unsafe { libc::putchar(*b as i32); }
-                    },
+                    0x03f8 => {
+                        for b in data {
+                            unsafe {
+                                libc::putchar(*b as i32);
+                            }
+                        }
+                    }
 
                     _ => panic!("Unexpected IO port!"),
                 },
