@@ -6,4 +6,5 @@ members = [
     "wasmtime-basic",
     "wasmtime-native-embed",
     "wasmtime-custom-syscall",
+    "wasmtime-udp-echoserver",
 ]

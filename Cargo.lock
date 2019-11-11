@@ -2754,6 +2754,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "wasmtime-udp-echoserver"
+version = "0.1.0"
+dependencies = [
+ "common 0.1.0",
+ "wabt 0.9.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "wasmtime 0.1.0 (git+https://github.com/steveeJ-forks/wasmtime?rev=16421f31b622c7e11fda038909d1e82cb4432cee)",
+ "wasmtime-bindings 0.2.0 (git+https://github.com/steveeJ-forks/wasmtime?rev=16421f31b622c7e11fda038909d1e82cb4432cee)",
+ "wasmtime-bindings-macro 0.2.0 (git+https://github.com/steveeJ-forks/wasmtime?rev=16421f31b622c7e11fda038909d1e82cb4432cee)",
+ "wasmtime-wasi 0.2.0 (git+https://github.com/steveeJ-forks/wasmtime?rev=16421f31b622c7e11fda038909d1e82cb4432cee)",
+]
+
+[[package]]
 name = "wasmtime-wasi"
 version = "0.0.0"
 source = "git+https://github.com/CraneStation/wasmtime/?rev=b7d86af#b7d86af0ec6dc6c3d228728f1ce47d0a0033c05f"

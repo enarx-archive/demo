@@ -18,3 +18,6 @@ sent off-platform to the tenant, who can verify the Quote with a certificate cha
 
 ## [Wasmtime - Simple Custom Syscall](wasmtime-custom-syscall)
 Providing a simple _println_ syscall to a pre-compiled WASM binary written in Rust.
+
+## [Wasmtime - UDP Echo-Server](wasmtime-udp-echoserver)
+Providing a rudimentary UDP implementation to a pre-compiled WASM binary written in Rust, which implements a UDP Echo-Server on top of the provided syscalls.
