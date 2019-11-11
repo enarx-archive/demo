@@ -15,3 +15,6 @@ A demonstration of remote attestation for an SGX enclave. The attesting enclave 
 Quoting Enclave, which verifies the Report and signs it with its Attestation Key, producing a Quote. The Quote is
 sent off-platform to the tenant, who can verify the Quote with a certificate chain from Intel. An attestation daemon
 (located on the enclave's same platform) communicates between the tenant and enclave.
+
+## [Wasmtime - Simple Custom Syscall](wasmtime-custom-syscall)
+Providing a simple _println_ syscall to a pre-compiled WASM binary written in Rust.
