@@ -39,7 +39,7 @@ fn main() {
     let result = wasm_add_full();
     println!("Finished. Results:");
     match result.unwrap() {
-        ActionOutcome::Returned { values } => println!("Output: {:#?}", values),
+        ActionOutcome::Returned { values } => println!("Output: {:#}", values[0]),
         ActionOutcome::Trapped { message } => println!("Trap from within function: {}", message),
     }
     println!("Done.");
