@@ -20,7 +20,7 @@
 
 use std::fs::File;
 use std::io::Read;
-use wasmtime::{Engine, Store, Val, Module, Instance, Trap};
+use wasmtime::{Engine, Instance, Module, Store, Trap, Val};
 
 // The basic WASM demo itself.
 fn main() {
