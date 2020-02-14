@@ -8,10 +8,7 @@ build = "build.rs"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-cranelift-codegen = { version = "0.36.0", features = ["enable-serde"] }
-cranelift-native = "0.36.0"
-wasmtime-wasi = { git = "https://github.com/CraneStation/wasmtime", package = "wasmtime-wasi", rev = "b7d86af0ec6dc6c3d228728f1ce47d0a0033c05f" }
-wasmtime-jit = { git = "https://github.com/CraneStation/wasmtime", package = "wasmtime-jit", rev = "b7d86af0ec6dc6c3d228728f1ce47d0a0033c05f" }
+wasmtime = "0.11.0"
 wabt = "0.7"
 
 [features]
