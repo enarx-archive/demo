@@ -1,0 +1,22 @@
+[package]
+name = "wasmtime-wasi-custom"
+version = "0.1.0"
+authors = ["Stefan Junker <sjunker@redhat.com>"]
+edition = "2018"
+build = "build.rs"
+
+[dependencies]
+wasmtime-api = { git = "https://github.com/CraneStation/wasmtime", package = "wasmtime-api", rev = "9c747db4293192dffe659ed741070716caeb43b0" }
+wasmtime-jit = { git = "https://github.com/CraneStation/wasmtime", package = "wasmtime-jit",  rev = "9c747db4293192dffe659ed741070716caeb43b0" }
+wasmtime-interface-types = { git = "https://github.com/CraneStation/wasmtime", package = "wasmtime-interface-types",  rev = "9c747db4293192dffe659ed741070716caeb43b0" }
+# A copy of wasmtime-wasi at v0.3.0 made for customisation purposes
+wasmtime-wasi = { git = "https://github.com/enarx/enarx-wasi-prototype", rev ="2ff5c5630488bedb956021da775f2b979307d41d" }
+
+log = "0.4"
+env_logger = "0.6"
+
+[features]
+default = ["rust"]
+
+c = []
+rust = []
