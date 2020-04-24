@@ -18,11 +18,9 @@
 
 #![cfg_attr(feature = "benchmark", feature(test))]
 
-use cranelift_codegen::settings;
-use cranelift_native;
 use std::fs::File;
 use std::io::Read;
-use wasmtime_jit::{ActionError, ActionOutcome, Context, RuntimeValue};
+use wasmtime::{Engine, Instance, Module, Store, Trap, Val};
 
 // The basic WASM demo itself.
 fn main() {
@@ -38,38 +36,38 @@ fn main() {
     println!("Loading and running WASM binary...");
     let result = wasm_add_full();
     println!("Finished. Results:");
-    match result.unwrap() {
-        ActionOutcome::Returned { values } => println!("Output: {:#}", values[0]),
-        ActionOutcome::Trapped { message } => println!("Trap from within function: {}", message),
+    match result {
+        Ok(values) => println!("Output: {:?}", values[0]),
+        Err(e) => println!("Trap from within function: {}", e.message()),
     }
     println!("Done.");
 }
 
 // A function to encapsulate the full setup and execution of a single iteration of the WASM demo.
-pub fn wasm_add_full() -> Result<ActionOutcome, ActionError> {
+pub fn wasm_add_full() -> Result<Box<[Val]>, Trap> {
     // First, we need to load the WASM binary in.
     let mut binary_file = File::open(concat!(env!("OUT_DIR"), "/add.wasm")).unwrap();
     let mut binary: Vec<u8> = Vec::new();
     binary_file.read_to_end(&mut binary).unwrap();
 
     // In order to run this binary, we need to prepare a few inputs.
+    // First, we need to create an Engine which is a global context for
+    // compilation and management of wasm modules.
+    let engine = Engine::default();
+    // Next we create a shared cache for wasm modules.
+    let store = Store::new(&engine);
+    // Next we create and compile our wasm module.
+    let module = Module::new(&store, binary).unwrap();
 
-    // First, we need a Wasmtime context. To build one, we need to get an ISA
-    // from `cranelift_native.
-    let isa_builder = cranelift_native::builder().unwrap();
-    let flag_builder = settings::builder();
-    let isa = isa_builder.finish(settings::Flags::new(flag_builder));
-
-    // Then, we use the ISA to build the context.
-    let mut context = Context::with_isa(isa);
-
-    // Now, we instantiate the WASM module loaded into memory.
-    let mut instance = context.instantiate_module(None, &binary).unwrap();
+    // Next we create a new instance of our Module.
+    let instance = Instance::new(&module, &[]).unwrap();
+    // And finally we get the function that we want to call.
+    let func = instance.get_export("add").unwrap().func().unwrap();
 
     // And, finally, invoke our function and print the results.
     // For this demo, all we're doing is adding 5 and 7 together.
-    let args = [RuntimeValue::I32(5), RuntimeValue::I32(7)];
-    context.invoke(&mut instance, "add", &args)
+    let args = [Val::I32(5), Val::I32(7)];
+    func.call(&args)
 }
 
 // A Rust function that does the same thing as the WASM demo, for benchmarking use.
@@ -106,22 +104,22 @@ mod tests {
         binary_file.read_to_end(&mut binary).unwrap();
 
         // In order to run this binary, we need to prepare a few inputs.
+        // First, we need to create an Engine which is a global context for
+        // compilation and management of wasm modules.
+        let engine = Engine::default();
+        // Next we create a shared cache for wasm modules.
+        let store = Store::new(&engine);
+        // Next we create and compile our wasm module.
+        let module = Module::new(&store, binary).unwrap();
 
-        // First, we need a Wasmtime context. To build one, we need to get an ISA
-        // from `cranelift_native.
-        let isa_builder = cranelift_native::builder().unwrap();
-        let flag_builder = settings::builder();
-        let isa = isa_builder.finish(settings::Flags::new(flag_builder));
-
-        // Then, we use the ISA to build the context.
-        let mut context = Context::with_isa(isa);
-
-        // Now, we instantiate the WASM module loaded into memory.
-        let mut instance = context.instantiate_module(None, &binary).unwrap();
+        // Next we create a new instance of our Module.
+        let instance = Instance::new(&module, &[]).unwrap();
+        // And finally we get the function that we want to call.
+        let func = instance.get_export("add").unwrap().func().unwrap();
 
         // And, finally, invoke our function and print the results.
         // For this demo, all we're doing is adding 5 and 7 together.
-        let args = [RuntimeValue::I32(5), RuntimeValue::I32(7)];
-        b.iter(|| context.invoke(&mut instance, "add", &args));
+        let args = [Val::I32(5), Val::I32(7)];
+        b.iter(|| func.call(&args));
     }
 }
