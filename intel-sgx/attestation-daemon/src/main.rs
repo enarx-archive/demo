@@ -1,6 +1,6 @@
+use serde_json::{from_reader, to_writer};
 use std::error::Error;
-use std::io::Write;
-use std::net::{TcpListener, TcpStream};
+use std::net::{Shutdown, TcpListener, TcpStream};
 
 const LISTENER_CONN: &'static str = "localhost:1034";
 const ENCLAVE_CONN: &'static str = "localhost:1032";
@@ -19,24 +19,23 @@ fn main() -> Result<(), Box<dyn Error>> {
         // used as the target for the enclave's attestation Report.
         let qe_ti = dcap_ql::target_info().expect("Could not retrieve QE target info.");
 
-        // Serialize the Target Info onto the stream to the enclave
         let mut enclave_stream = TcpStream::connect(ENCLAVE_CONN)?;
-        serde_json::to_writer(&mut enclave_stream, &qe_ti)?;
-        enclave_stream.shutdown(std::net::Shutdown::Write)?;
+        to_writer(&mut enclave_stream, &qe_ti)?;
+        enclave_stream.shutdown(Shutdown::Write)?;
 
         // The attestation daemon receives the Report back from the attesting enclave.
-        let report: sgx_isa::Report = serde_json::from_reader(&mut enclave_stream)?;
+        let report: sgx_isa::Report = from_reader(enclave_stream)?;
 
         // The attestation daemon gets a Quote from the Quoting Enclave for the Report.
         // The Quoting Enclave verifies the Report's MAC as a prerequisite for generating
         // the Quote. The Quote is signed with the Quoting Enclave's Attestation Key.
         let quote = dcap_ql::quote(&report).expect("Could not generate quote.");
 
-        // The attestation daemon sends the Quote to the tenant.
         let mut tenant_stream = incoming_tenant_stream?;
-        tenant_stream.write(&quote)?;
+        to_writer(&mut tenant_stream, &quote)?;
+        tenant_stream.shutdown(Shutdown::Write)?;
 
-        println!("\nQuote successfully generated and sent to tenant...");
+        println!("\nQuote successfully generated and sent to tenant.");
     }
     Ok(())
 }

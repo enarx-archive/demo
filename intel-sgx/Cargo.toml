@@ -4,3 +4,4 @@ members = ['attestation-enclave', 'attestation-daemon', 'attestation-tenant']
 [patch.crates-io]
 dcap-ql = { git = "https://github.com/lkatalin/rust-sgx", branch = "serde-pck", rev = "aa81839e714ad7501e6ef44b2d4e61c8574548d4" }
 sgx-isa = { git = "https://github.com/lkatalin/rust-sgx", branch = "serde-pck", rev = "aa81839e714ad7501e6ef44b2d4e61c8574548d4" }
+mbedtls = { git = "https://github.com/haraldh/rust-mbedtls", branch = "upstream_bindgen" }
