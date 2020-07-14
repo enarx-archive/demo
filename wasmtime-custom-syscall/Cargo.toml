@@ -1,0 +1,17 @@
+[package]
+name = "wasmtime-custom-syscall"
+version = "0.1.0"
+authors = ["Stefan Junker <sjunker@redhat.com>"]
+edition = "2018"
+build = "build.rs"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+common = { path = "../common" }
+wabt = "0.9"
+
+wasmtime = { git = "https://github.com/steveeJ-forks/wasmtime", rev = "16421f31b622c7e11fda038909d1e82cb4432cee" }
+wasmtime-bindings = { git = "https://github.com/steveeJ-forks/wasmtime", rev = "16421f31b622c7e11fda038909d1e82cb4432cee" }
+wasmtime-bindings-macro = { git = "https://github.com/steveeJ-forks/wasmtime", rev = "16421f31b622c7e11fda038909d1e82cb4432cee" }
+wasmtime-wasi = { git = "https://github.com/steveeJ-forks/wasmtime", rev = "16421f31b622c7e11fda038909d1e82cb4432cee" }
